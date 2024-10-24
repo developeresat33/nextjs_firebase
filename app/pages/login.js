@@ -1,16 +1,18 @@
 "use client";
 // app/login.js
-import { useState, useEffect } from 'react';
+import { useState, } from 'react';
+import AlertModal from '../widgets/alert_modal';
 import { doLogin } from '../states/home_provider';
 
 export default function Login() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
+    const [showModal, setShowModal] = useState(false); // Modal görünürlüğü
     const [isLoading, setLoginSuccess] = useState(false);
-
+    const [errorMessage, setMsg] = useState('');
     const handleSubmit = async (e) => {
+        setShowModal(false);
         e.preventDefault();
         setLoginSuccess(true);
         const loginSuccess = await doLogin(email, password);
@@ -18,25 +20,19 @@ export default function Login() {
 
 
         if (!loginSuccess) {
+            setMsg('Giriş bilgileri hatalı. Lütfen tekrar deneyin.');
+            setShowModal(true);
 
-            setErrorMessage("Giriş başarısız. Lütfen e-posta ve şifrenizi kontrol edin.");
+
 
         } else {
-            setErrorMessage('');
+            
             console.log("Kullanıcı başarıyla giriş yaptı.");
         }
 
         setLoginSuccess(false);
     };
-    useEffect(() => {
 
-        if (errorMessage) {
-            const timer = setTimeout(() => {
-                setErrorMessage('');
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [errorMessage]);
 
 
     return (
@@ -59,16 +55,19 @@ export default function Login() {
                         <button type="submit" className="btn btn-primary" style={{ width: '150px' }}>      {/* Spinner */}
                             {isLoading && <div className="spinner-border spinner-border-sm me-2" role="status">
                                 <span className="visually-hidden">Loading...</span>
-                            </div>}  {!isLoading && (<span>Giriş Yap</span>  )} </button>
+                            </div>}  {!isLoading && (<span>Giriş Yap</span>)} </button>
                     </div>
                 </form>
             </div>
-            {/* Hata mesajı için alert divi */}
-            {errorMessage && (
-                <div className="mt-2 alert alert-danger" role='alert'>
-                    {errorMessage}
-                </div>
-            )}
+
+            <AlertModal
+                show={showModal}
+                title="Giriş Hatası"
+                description={errorMessage}
+            />
+
         </div>
+
+
     );
 }
