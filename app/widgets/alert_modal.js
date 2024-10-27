@@ -1,36 +1,23 @@
-"use client"; // Client bileşeni olduğunu belirtir
-import { useState, useEffect } from 'react';
-
-export default function AlertModal({ title, description, show }) {
-    const [isVisible, setIsVisible] = useState(show); // Başlangıçta show değerini alır
-
-    // show değeri her değiştiğinde bileşen içindeki state güncellenir
-    useEffect(() => {
-        setIsVisible(show);
-    }, [show]);
-
-    // Eğer modal görünür değilse render etme
-    if (!isVisible) return null;
-
-    const handleClose = () => {
-        setIsVisible(false); // Modalı kapat
-    };
+// widgets/alert_modal.js
+export default function AlertModal({ show, title, description, onClose }) {
+    if (!show) return null;
 
     return (
-        <>
-            <div className="modal fade show d-block" tabIndex="-1" aria-hidden="true" role="dialog" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content">
-                        <div className="modal-header">
-                            <h5 className="modal-title">{title}</h5>
-                            <button type="button" className="btn-close" onClick={handleClose}></button> {/* Modalı kapat */}
-                        </div>
-                        <div className="modal-body">
-                            <p>{description}</p>
-                        </div>
+        <div className="modal fade show" style={{ display: 'block' }} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog modal-dialog-centered"> {/* Orta pozisyonda yerleştirme */}
+                <div className="modal-content">
+                    <div className="modal-header">
+                        <h5 className="modal-title" id="exampleModalLabel">{title}</h5>
+                        <button type="button" className="btn-close" onClick={onClose}></button>
+                    </div>
+                    <div className="modal-body">
+                        {description}
+                    </div>
+                    <div className="modal-footer">
+                        <button type="button" className="btn btn-secondary" onClick={onClose}>Kapat</button>
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 }

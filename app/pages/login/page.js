@@ -1,39 +1,42 @@
 "use client";
 // app/login.js
-import { useState, } from 'react';
-import AlertModal from '../widgets/alert_modal';
-import { doLogin } from '../states/home_provider';
-
+import { useState } from 'react';
+import AlertModal from '../../widgets/alert_modal';
+import { doLogin, } from '../../states/home_provider';
+import { useLoading } from '../../widgets/loading';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation'; // useRouter'ı içe aktarın
 export default function Login() {
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showModal, setShowModal] = useState(false); // Modal görünürlüğü
-    const [isLoading, setLoginSuccess] = useState(false);
+    const { setIsVisible } = useLoading(); // useLoading'den setIsVisible fonksiyonunu alın
     const [errorMessage, setMsg] = useState('');
+    const router = useRouter();
+
     const handleSubmit = async (e) => {
-        setShowModal(false);
+
         e.preventDefault();
-        setLoginSuccess(true);
-        const loginSuccess = await doLogin(email, password);
 
 
+        setShowModal(false);
+
+        const loginSuccess = await doLogin(email, password, setIsVisible);
 
         if (!loginSuccess) {
             setMsg('Giriş bilgileri hatalı. Lütfen tekrar deneyin.');
             setShowModal(true);
-
-
-
         } else {
-            
             console.log("Kullanıcı başarıyla giriş yaptı.");
+            // Başarılı girişten sonra yönlendirme veya işlem yapılabilir.
+            router.push('/pages/dashboard');
         }
 
-        setLoginSuccess(false);
     };
 
-
+    const handleCloseModal = () => {
+        setShowModal(false); // Modalı kapat
+    };
 
     return (
         <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: '100vh', width: '100%' }}>
@@ -52,22 +55,21 @@ export default function Login() {
                         <label className="form-check-label" htmlFor="exampleCheck1">Beni Hatırla</label>
                     </div>
                     <div className="d-flex justify-content-end">
-                        <button type="submit" className="btn btn-primary" style={{ width: '150px' }}>      {/* Spinner */}
-                            {isLoading && <div className="spinner-border spinner-border-sm me-2" role="status">
-                                <span className="visually-hidden">Loading...</span>
-                            </div>}  {!isLoading && (<span>Giriş Yap</span>)} </button>
+                        <button type="submit" className="btn btn-primary" style={{ width: '150px' }}>
+                            Giriş Yap
+                        </button>
                     </div>
                 </form>
             </div>
+            <div className='d-flex justify-content-start' style={{ width: '400px', }}> <p className='mt-3'>Hesabınız yok mu? <Link href="/pages/register">Kayıt Ol</Link></p></div>
+
 
             <AlertModal
                 show={showModal}
                 title="Giriş Hatası"
                 description={errorMessage}
+                onClose={handleCloseModal}  // Modalı kapatma fonksiyonu
             />
-
         </div>
-
-
     );
 }

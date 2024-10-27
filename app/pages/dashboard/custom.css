@@ -1,0 +1,48 @@
+.content-left {
+    height: 100vh;
+    background-color: #343a40;
+    padding: 20px;
+    color: white;
+}
+
+.content-left a {
+
+    text-decoration: none;
+    color: #fff;
+    display: block;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.content-left a:hover {
+    background-color: #495057;
+}
+
+.content-middle {
+    background-color: #f8f8f8;
+    padding: 20px;
+
+}
+
+
+.product-list {
+    margin-top: 20px;
+    width: 100%;
+    height: calc(100vh - 200px); 
+    overflow-y: auto;
+
+}
+
+.product-list::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+@media (max-width: 768px) {
+    .content-left {
+        height: auto;
+        /* Mobil ve tablet modunda yüksekliği otomatik yap */
+    }
+}
