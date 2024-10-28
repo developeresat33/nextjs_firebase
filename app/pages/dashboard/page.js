@@ -29,7 +29,7 @@ export default function Dashboard() {
     };
 
     return (
-        <div className="container-xxl">
+        <div className="container-fluid p-0">
             <div className="row gx-0">
                 <div className="col-md-3">
                     <div className="content-left" style={{ width: "100%" }} id="sidebarMenu">

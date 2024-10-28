@@ -1,6 +1,6 @@
 "use client";
 // app/login.js
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AlertModal from '../../widgets/alert_modal';
 import { doLogin, } from '../../states/home_provider';
 import { useLoading } from '../../widgets/loading';
@@ -10,9 +10,25 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showModal, setShowModal] = useState(false); // Modal görünürlüğü
+    const [rememberMe, setRememberMe] = useState(false);
     const { setIsVisible } = useLoading(); // useLoading'den setIsVisible fonksiyonunu alın
     const [errorMessage, setMsg] = useState('');
     const router = useRouter();
+    // Sayfanın başında çalısacak olan fonksiyon
+    useEffect(() => {
+        const savedEmail = localStorage.getItem('email');
+        const savedRememberMe = localStorage.getItem('rememberMe');
+        console.log(savedEmail);
+        console.log(savedRememberMe);
+    
+        if (savedEmail) {
+            setEmail(savedEmail);
+        }
+    
+        // Boolean olarak ayarla
+        setRememberMe(savedRememberMe === 'true');
+    }, []);
+
 
     const handleSubmit = async (e) => {
 
@@ -27,8 +43,14 @@ export default function Login() {
             setMsg('Giriş bilgileri hatalı. Lütfen tekrar deneyin.');
             setShowModal(true);
         } else {
+            if (rememberMe) {
+                localStorage.setItem('email', email);
+                localStorage.setItem('rememberMe', rememberMe);
+            } else {
+                localStorage.removeItem('rememberMe');
+                localStorage.removeItem('email');
+            }
             console.log("Kullanıcı başarıyla giriş yaptı.");
-            // Başarılı girişten sonra yönlendirme veya işlem yapılabilir.
             router.push('/pages/dashboard');
         }
 
@@ -38,20 +60,28 @@ export default function Login() {
         setShowModal(false); // Modalı kapat
     };
 
+    const handleRememberMeChange = (e) => {
+        setRememberMe(e.target.checked);
+        console.log(rememberMe);
+    };
+
+
+
+
     return (
         <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: '100vh', width: '100%' }}>
             <div className="bg-light rounded shadow p-5" style={{ width: '400px', height: '400px' }}>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-3">
                         <label htmlFor="exampleInputEmail1" className="form-label">Email Adresi</label>
-                        <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" onChange={(e) => setEmail(e.target.value)} required />
+                        <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" value={email} onChange={(e) => setEmail(e.target.value)} required />
                     </div>
                     <div className="mb-3">
                         <label htmlFor="exampleInputPassword1" className="form-label">Şifre</label>
                         <input type="password" className="form-control" id="exampleInputPassword1" onChange={(e) => setPassword(e.target.value)} required />
                     </div>
                     <div className="mb-3 form-check">
-                        <input type="checkbox" className="form-check-input" id="exampleCheck1" />
+                        <input type="checkbox" className="form-check-input" id="exampleCheck1" onChange={handleRememberMeChange} checked={rememberMe} />
                         <label className="form-check-label" htmlFor="exampleCheck1">Beni Hatırla</label>
                     </div>
                     <div className="d-flex justify-content-end">

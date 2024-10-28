@@ -5,12 +5,12 @@ import { useRegisterController } from '../../controllers/register_controller';
 import AlertModal from '../../widgets/alert_modal';
 import { register } from '../../states/home_provider';
 import { useLoading } from '../../widgets/loading';
-
+import { useRouter } from 'next/navigation'; // 'next/navigation' ile doğru import
 export default function Register() {
     const { formData, handleChange } = useRegisterController();
     const [errorMessage, setMsg] = useState('');
     const [showModal, setShowModal] = useState(false);
-
+    const router = useRouter();
     const { setIsVisible } = useLoading(); // Burada useLoading kullanımı uygun
 
     const handleSubmit = async (e) => {
@@ -62,7 +62,8 @@ export default function Register() {
                             <label htmlFor="password_confirmation" className="form-label">Şifre Tekrar</label>
                             <input type="password" className="form-control" id="password_confirmation" value={formData.password_confirmation} onChange={handleChange} required />
                         </div>
-                        <div className='button_inbox d-flex justify-content-end'>
+                        <div className='button_inbox d-flex justify-content-between'>
+                            <button type="button" className="btn btn-secondary" onClick={() => router.push('./login')}>Geri Dön</button>
                             <button type="submit" className="btn btn-primary">Kayıt Ol</button>
                         </div>
                     </form>
